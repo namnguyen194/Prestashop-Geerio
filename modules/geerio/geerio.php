@@ -55,6 +55,7 @@ class Geerio extends Module {
         if (!parent::install() || !Configuration::updateValue('PS_GEER_IO_TRIGGER', 'trigger') || !Configuration::updateValue('CONTACT_STATE', false)) {
             return false;
         }
+        $this->registerHook('displayAfterUpdate');
         $this->registerHook('displayHeader'); 
         $this->registerHook('authentication'); 
         $this->registerHook('actionCustomerAccountAdd');
@@ -78,6 +79,8 @@ class Geerio extends Module {
         $this->unregisterHook('displayBackOfficeHeader');
         return true;
     }
+    
+
     public function hookdisplayHeader($params) {
         $this->context->smarty->assign(
                 array(
@@ -97,6 +100,7 @@ class Geerio extends Module {
     function hookdisplayTop() {
         
         //$state_conf = Configuration::get('CONTACT_STATE');
+        $module_url = Tools::getProtocol(Tools::usingSecureMode()).$_SERVER['HTTP_HOST'].$this->getPathUri();
         if (Configuration::get('CONTACT_STATE')) {
             $id = $this->context->cookie->id_customer;
             $info = TriggerTool::getCustomerByID($id);
@@ -118,17 +122,17 @@ class Geerio extends Module {
     public function  hookactionAuthentication($param){
        Configuration::updateValue('CONTACT_STATE', true);
     }
-    
-//    public function  hookdisplayCustomerIdentityForm(){
-//      $id = $this->context->cookie->id_customer;
-//      $info = TriggerTool::getCustomerByID($id);
-//            $this->context->smarty->assign(
-//                array(
-//                    'INFO' => $info
-//                )
-//             );
-//      return $this->display(__FILE__, 'contact-tag-upd.tpl');
-//    }
+    public function hookdisplayAfterUpdate($params){
+        $id = $this->context->cookie->id_customer;
+            $info = TriggerTool::getCustomerByID($id);
+            $this->context->smarty->assign(
+                array(
+                    'INFO' => $info
+                )
+             );
+            Configuration::updateValue('CONTACT_STATE', false);
+            return $this->display(__FILE__, 'contact-tag.tpl');
+    }
     public function getContent() {
         $output = null;
 

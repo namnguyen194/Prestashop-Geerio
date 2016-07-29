@@ -1,6 +1,6 @@
-<?php /* Smarty version Smarty-3.1.19, created on 2016-07-29 01:30:53
+<?php /* Smarty version Smarty-3.1.19, created on 2016-07-29 05:12:36
          compiled from "C:\xampp\htdocs\ps-v3\admin484po0ipm\themes\default\template\header.tpl" */ ?>
-<?php /*%%SmartyHeaderCode:1886579aea0dab0992-46298202%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+<?php /*%%SmartyHeaderCode:31049579b1e04eb5832-15620697%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
   'file_dependency' => 
   array (
@@ -11,7 +11,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
       2 => 'file',
     ),
   ),
-  'nocache_hash' => '1886579aea0dab0992-46298202',
+  'nocache_hash' => '31049579b1e04eb5832-15620697',
   'function' => 
   array (
   ),
@@ -75,9 +75,9 @@ $_valid = $_smarty_tpl->decodeProperties(array (
   ),
   'has_nocache_code' => false,
   'version' => 'Smarty-3.1.19',
-  'unifunc' => 'content_579aea0dd11f98_01968741',
+  'unifunc' => 'content_579b1e051441b0_90271902',
 ),false); /*/%%SmartyHeaderCode%%*/?>
-<?php if ($_valid && !is_callable('content_579aea0dd11f98_01968741')) {function content_579aea0dd11f98_01968741($_smarty_tpl) {?>
+<?php if ($_valid && !is_callable('content_579b1e051441b0_90271902')) {function content_579b1e051441b0_90271902($_smarty_tpl) {?>
 <!DOCTYPE html>
 <!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7 lt-ie6 " lang="en"> <![endif]-->
 <!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8 ie7" lang="en"> <![endif]-->
@@ -256,7 +256,7 @@ $_smarty_tpl->tpl_vars['mediaie9']->_loop = true;
 				<?php }?>
 				<ul id="header_notifs_icon_wrapper">
 <?php ob_start();?><?php echo $_smarty_tpl->tpl_vars['show_new_orders']->value;?>
-<?php $_tmp1=ob_get_clean();?><?php if ($_tmp1==1) {?>
+<?php $_tmp2=ob_get_clean();?><?php if ($_tmp2==1) {?>
 					<li id="orders_notif" class="dropdown" data-type="order">
 						<a href="javascript:void(0);" class="dropdown-toggle notifs" data-toggle="dropdown">
 							<i class="icon-shopping-cart"></i>
@@ -286,7 +286,7 @@ $_smarty_tpl->tpl_vars['mediaie9']->_loop = true;
 					</li>
 <?php }?>
 <?php ob_start();?><?php echo $_smarty_tpl->tpl_vars['show_new_customers']->value;?>
-<?php $_tmp2=ob_get_clean();?><?php if ($_tmp2==1) {?>
+<?php $_tmp3=ob_get_clean();?><?php if ($_tmp3==1) {?>
 					<li id="customers_notif" class="dropdown" data-type="customer">
 						<a href="javascript:void(0);" class="dropdown-toggle notifs" data-toggle="dropdown">
 							<i class="icon-user"></i>
@@ -316,7 +316,7 @@ $_smarty_tpl->tpl_vars['mediaie9']->_loop = true;
 					</li>
 <?php }?>
 <?php ob_start();?><?php echo $_smarty_tpl->tpl_vars['show_new_messages']->value;?>
-<?php $_tmp3=ob_get_clean();?><?php if ($_tmp3==1) {?>
+<?php $_tmp4=ob_get_clean();?><?php if ($_tmp4==1) {?>
 					<li id="customer_messages_notif" class="dropdown" data-type="customer_message">
 						<a href="javascript:void(0);" class="dropdown-toggle notifs" data-toggle="dropdown">
 							<i class="icon-envelope"></i>
@@ -358,7 +358,7 @@ foreach ($_from as $_smarty_tpl->tpl_vars['quick']->key => $_smarty_tpl->tpl_var
 $_smarty_tpl->tpl_vars['quick']->_loop = true;
 ?>
 								<li <?php ob_start();?><?php echo $_smarty_tpl->tpl_vars['quick']->value['link'];?>
-<?php $_tmp4=ob_get_clean();?><?php if ($_smarty_tpl->tpl_vars['link']->value->matchQuickLink($_tmp4)) {?><?php $_smarty_tpl->tpl_vars["matchQuickLink"] = new Smarty_variable($_smarty_tpl->tpl_vars['quick']->value['id_quick_access'], null, 0);?>class="active"<?php }?>>
+<?php $_tmp5=ob_get_clean();?><?php if ($_smarty_tpl->tpl_vars['link']->value->matchQuickLink($_tmp5)) {?><?php $_smarty_tpl->tpl_vars["matchQuickLink"] = new Smarty_variable($_smarty_tpl->tpl_vars['quick']->value['id_quick_access'], null, 0);?>class="active"<?php }?>>
 									<a href="<?php echo htmlspecialchars($_smarty_tpl->tpl_vars['quick']->value['link'], ENT_QUOTES, 'UTF-8', true);?>
 "<?php if ($_smarty_tpl->tpl_vars['quick']->value['new_window']) {?> class="_blank"<?php }?>>
 										<?php if (isset($_smarty_tpl->tpl_vars['quick']->value['icon'])) {?>
@@ -462,7 +462,7 @@ $_smarty_tpl->tpl_vars['quick']->_loop = true;
 						</li>
 					<?php }?>
 <?php ob_start();?><?php echo $_smarty_tpl->tpl_vars['base_url']->value;?>
-<?php $_tmp5=ob_get_clean();?><?php if ($_tmp5) {?>
+<?php $_tmp6=ob_get_clean();?><?php if ($_tmp6) {?>
 					<li>
 						<a href="<?php if (isset($_smarty_tpl->tpl_vars['base_url_tc']->value)) {?><?php echo htmlspecialchars($_smarty_tpl->tpl_vars['base_url_tc']->value, ENT_QUOTES, 'UTF-8', true);?>
 <?php } else { ?><?php echo htmlspecialchars($_smarty_tpl->tpl_vars['base_url']->value, ENT_QUOTES, 'UTF-8', true);?>
