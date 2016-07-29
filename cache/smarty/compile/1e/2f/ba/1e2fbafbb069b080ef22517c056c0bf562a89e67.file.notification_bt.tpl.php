@@ -1,6 +1,6 @@
-<?php /* Smarty version Smarty-3.1.19, created on 2016-07-29 04:51:12
+<?php /* Smarty version Smarty-3.1.19, created on 2016-07-29 05:42:55
          compiled from "C:\xampp\htdocs\ps-v3\modules\gamification\views\templates\hook\notification_bt.tpl" */ ?>
-<?php /*%%SmartyHeaderCode:32491579b1900d54725-08679422%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+<?php /*%%SmartyHeaderCode:26004579b251f9df6c0-37067809%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
   'file_dependency' => 
   array (
@@ -11,7 +11,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
       2 => 'file',
     ),
   ),
-  'nocache_hash' => '32491579b1900d54725-08679422',
+  'nocache_hash' => '26004579b251f9df6c0-37067809',
   'function' => 
   array (
   ),
@@ -31,9 +31,9 @@ $_valid = $_smarty_tpl->decodeProperties(array (
   ),
   'has_nocache_code' => false,
   'version' => 'Smarty-3.1.19',
-  'unifunc' => 'content_579b1900e5a2a9_46078693',
+  'unifunc' => 'content_579b251fa93215_86105601',
 ),false); /*/%%SmartyHeaderCode%%*/?>
-<?php if ($_valid && !is_callable('content_579b1900e5a2a9_46078693')) {function content_579b1900e5a2a9_46078693($_smarty_tpl) {?><script>
+<?php if ($_valid && !is_callable('content_579b251fa93215_86105601')) {function content_579b251fa93215_86105601($_smarty_tpl) {?><script>
 	var current_id_tab = <?php echo intval($_smarty_tpl->tpl_vars['current_id_tab']->value);?>
 ;
 	var current_level_percent = <?php echo intval($_smarty_tpl->tpl_vars['current_level_percent']->value);?>

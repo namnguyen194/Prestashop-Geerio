@@ -1,10 +1,14 @@
 <?php
-
+/* 
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 class IdentityController extends IdentityControllerCore {
     
     /*
     * module: geerio
-    * date: 2016-07-29 05:12:30
+    * date: 2016-07-29 05:40:04
     * version: 1.7
     */
     public function initContent() {

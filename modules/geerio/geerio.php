@@ -61,7 +61,6 @@ class Geerio extends Module {
         $this->registerHook('actionCustomerAccountAdd');
         $this->registerHook('displayTop') ;
         $this->registerHook('displayCustomerIdentityForm'); 
-        $this->registerHook('displayBackOfficeHeader');
         return true;
     }
 
@@ -76,20 +75,11 @@ class Geerio extends Module {
         $this->unregisterHook('actionCustomerAccountAdd');
         $this->unregisterHook('displayTop');
         $this->unregisterHook('displayCustomerIdentityForm');
-        $this->unregisterHook('displayBackOfficeHeader');
         return true;
     }
     
 
     public function hookdisplayHeader($params) {
-        $this->context->smarty->assign(
-                array(
-                    'KEY' => Configuration::get('PS_GEER_IO_HMAC_SECRET')
-                )
-        );
-        return $this->display(__FILE__, 'script-header.tpl');
-    }
-    public function hookdisplayBackOfficeHeader($params){
         $this->context->smarty->assign(
                 array(
                     'KEY' => Configuration::get('PS_GEER_IO_HMAC_SECRET')
