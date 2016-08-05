@@ -25,6 +25,7 @@
 */
 require_once(dirname(__FILE__) . '/../../config/config.inc.php');
 require_once _PS_MODULE_DIR_.'geerio/GeerioGetData.php';
+require_once _PS_MODULE_DIR_.'geerio/TriggerTool.php';
 
 if (!defined('_PS_VERSION_'))
     exit;
@@ -59,20 +60,13 @@ class Geerio extends Module {
            ) {
             return false;
         }
-        $this->context->cookie->__set('DIRT_VAR',0);  //test
-        $this->context->cookie->__unset('STATE_CONTACT'); // can remove
+        unset($_COOKIE['STATE']);
         $this->registerHook('actionAfterUpdate');
         $this->registerHook('displayHeader'); 
-        $this->registerHook('displayBackOfficeHeader') ;
         $this->registerHook('authentication'); 
         $this->registerHook('actionCustomerAccountAdd');
         $this->registerHook('displayTop') ;
-        $this->registerHook('displayRightColumnProduct');
-        $this->registerHook('actionCartSave') ;
-        $this->registerHook('actionCartListOverride') ;
-        $this->registerHook('displayShoppingCartFooter') ;
-         
-        
+        $this->registerHook('displayRightColumnProduct'); //displayRightColumnProduct
         return true;
     }
 
@@ -85,44 +79,25 @@ class Geerio extends Module {
         }
         $this->unregisterHook('actionAfterUpdate');
         $this->unregisterHook('displayHeader') ;
-        $this->unregisterHook('displayBackOfficeHeader') ;
         $this->unregisterHook('authentication');
         $this->unregisterHook('actionCustomerAccountAdd');
         $this->unregisterHook('displayTop');
         $this->unregisterHook('displayRightColumnProduct');
-        $this->unregisterHook('actionCartSave');
-        $this->unregisterHook('actionCartListOverride') ; //
-        $this->unregisterHook('displayShoppingCartFooter') ;
-          
-        
         return true;
     }
-  
-  
-    
-    public function hookdisplayRightColumnProduct() {
+    public function hookdisplayRightColumnProduct($params) {
         if (Configuration::get('PS_GEER_IO_PAGES')=='PRODUCT'){
             $this->context->smarty->assign(
                 array(
                     'NAV_PRO'=>true
                 )
              );
-            return $this->display(__FILE__, 'displaytop-tag.tpl');
+            return $this->display(__FILE__, 'contact-tag.tpl');
         }
-        return '';
+        return false;
     }
 
-    public function hookdisplayBackOfficeHeader() {
-        
-        $this->context->smarty->assign(
-                array(
-                    'KEY' => Configuration::get('PS_GEER_IO_HMAC_SECRET')
-                )
-        );
-        return $this->display(__FILE__, 'script-header.tpl');
-    }
-    public function hookdisplayHeader() {
-        $this->context->cookie->__set('SHOPPING_CART_GEERIO',0);
+    public function hookdisplayHeader($params) {
         $this->context->smarty->assign(
                 array(
                     'KEY' => Configuration::get('PS_GEER_IO_HMAC_SECRET')
@@ -131,7 +106,6 @@ class Geerio extends Module {
         return $this->display(__FILE__, 'script-header.tpl');
     }
     function hookdisplayTop() {
-        $this->context->cookie->__set('SHOPPING_CART_GEERIO',0);
         if (Configuration::get('PS_GEER_IO_PAGES')=='ALL'){
             $this->context->smarty->assign(
                 array(
@@ -139,7 +113,7 @@ class Geerio extends Module {
                 )
              );
         }
-        if (isset($this->context->cookie->STATE_CONTACT)) { 
+        if ($this->context->cookie->STATE==1) { 
             $id = $this->context->cookie->id_customer;
             $info = GeerioGetData::getCustomerByID($id);
             $this->context->smarty->assign(
@@ -148,24 +122,22 @@ class Geerio extends Module {
                     'CONTACT_SCRIPT'=>true
                 )
              );
-            $this->context->cookie->__unset('STATE_CONTACT');
+           
+            $this->context->cookie->__set('STATE',0);
+            
         }
-        return $this->display(__FILE__, 'displaytop-tag.tpl');
+     return $this->display(__FILE__, 'contact-tag.tpl');
     }
-    public function hookactionCustomerAccountAdd() {
+    public function hookactionCustomerAccountAdd($param) {
         
-      $this->context->cookie->__set('STATE_CONTACT',1);
+      $this->context->cookie->__set('STATE',1);
     }
-    public function  hookactionAuthentication(){
-        $this->context->cookie->__set('STATE_CONTACT',1);
+    public function  hookactionAuthentication($param){
+      
+        $this->context->cookie->__set('STATE',1);
     }
-    public function hookactionAfterUpdate(){
-        $this->context->cookie->__set('STATE_CONTACT',1);
-    }
-    public function hookactionCartSave(){
-        if(!Configuration::get('PS_BLOCK_CART_AJAX')){
-            $this->context->cookie->__set('STATE_CART',1);
-        }
+    public function hookactionAfterUpdate($params){
+        $this->context->cookie->__set('STATE',1);
     }
     public function getContent() { 
         $output = null;
@@ -249,34 +221,14 @@ class Geerio extends Module {
                             'id' => 'product',
                             'value' => 'PRODUCT',
                             'label' => $this->l('Product Page')
-                        ),
-                        array(
-                            'id' => 'link_start_with',
-                            'value' => '',
-                            'label' => $this->l('Link Start with')
-                        ),
-                        array(
-                            'id' => 'link_terminal_with',
-                            'value' => '',
-                            'label' => $this->l('Link End with')
                         )
                     )
                 ),
                 array(
-                    'type' => 'text',
-                    'name' => 'value_for_link_start',
-                    'id' => 'value_for_start_with',
+                    'type'=>'free',
+                    'label' =>  $this->l('Connector URL'),
+                    'name' => 'connector'
                 ),
-                array(
-                    'type' => 'text',
-                    'name' => 'value_for_link_end',
-                    'id' => 'value_for_end_with',
-                ),
-//                array(
-//                    'type'=>'free',
-//                    'label' =>  $this->l('Connector URL'),
-//                    'name' => 'connector'
-//                ),
                 
                 array(
                     'type'=>'free',
@@ -329,5 +281,5 @@ class Geerio extends Module {
 
         return $helper->generateForm($fields_form);
     }
-        
+
 }

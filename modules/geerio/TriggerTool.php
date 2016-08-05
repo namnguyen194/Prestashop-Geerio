@@ -132,7 +132,7 @@ class TriggerTool extends WebserviceOutputBuilderCore {
         return $id;
     }
 
-
+    
     public static function filterIdProductsByDate($from, $to) {
         $sql_nd = 'SELECT DISTINCT `id_product`
             FROM `' . _DB_PREFIX_ . 'product` ORDER BY id_product ASC';
