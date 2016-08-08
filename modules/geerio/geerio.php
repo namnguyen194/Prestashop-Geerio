@@ -59,8 +59,6 @@ class Geerio extends Module {
            ) {
             return false;
         }
-        $this->context->cookie->__set('DIRT_VAR',0);  //test
-        $this->context->cookie->__unset('STATE_CONTACT'); // can remove
         $this->registerHook('actionAfterUpdate');
         $this->registerHook('displayHeader'); 
         $this->registerHook('displayBackOfficeHeader') ;
@@ -69,10 +67,7 @@ class Geerio extends Module {
         $this->registerHook('displayTop') ;
         $this->registerHook('displayRightColumnProduct');
         $this->registerHook('actionCartSave') ;
-        $this->registerHook('actionCartListOverride') ;
-        $this->registerHook('displayShoppingCartFooter') ;
-         
-        
+        $this->registerHook('ActionAdminControllerSetMedia');      
         return true;
     }
 
@@ -91,20 +86,24 @@ class Geerio extends Module {
         $this->unregisterHook('displayTop');
         $this->unregisterHook('displayRightColumnProduct');
         $this->unregisterHook('actionCartSave');
-        $this->unregisterHook('actionCartListOverride') ; //
-        $this->unregisterHook('displayShoppingCartFooter') ;
-          
-        
+        $this->unregisterHook('ActionAdminControllerSetMedia');
+
         return true;
     }
-  
+    
+    function hookActionAdminControllerSetMedia(){
+         if(strtolower(Tools::getValue('controller')) == 'adminmodules' && Tools::getValue('configure')=='geerio'){
+             $this->context->controller->addJS( $this->_path .'js/config.js' );
+             $this->context->controller->addCSS($this->_path.'css/config.css');
+         }
+    }
   
     
     public function hookdisplayRightColumnProduct() {
         if (Configuration::get('PS_GEER_IO_PAGES')=='PRODUCT'){
             $this->context->smarty->assign(
                 array(
-                    'NAV_PRO'=>true
+                    'NAV_SHOW'=>true
                 )
              );
             return $this->display(__FILE__, 'displaytop-tag.tpl');
@@ -122,10 +121,10 @@ class Geerio extends Module {
         return $this->display(__FILE__, 'script-header.tpl');
     }
     public function hookdisplayHeader() {
-        $this->context->cookie->__set('SHOPPING_CART_GEERIO',0);
         $this->context->smarty->assign(
                 array(
                     'KEY' => Configuration::get('PS_GEER_IO_HMAC_SECRET')
+                    
                 )
         );
         return $this->display(__FILE__, 'script-header.tpl');
@@ -135,9 +134,37 @@ class Geerio extends Module {
         if (Configuration::get('PS_GEER_IO_PAGES')=='ALL'){
             $this->context->smarty->assign(
                 array(
-                    'NAV_ALL'=>true
+                    'NAV_SHOW'=>true
                 )
              );
+        }
+        if(substr( Configuration::get('PS_GEER_IO_PAGES'),0, 5 )=='start'){
+            $list_page_value = Configuration::get('PS_GEER_IO_PAGES');
+            $list_page_value = substr($list_page_value,6);
+            $link_current = substr($_SERVER['REQUEST_URI'],strlen(__PS_BASE_URI__));
+            if($list_page_value == substr($link_current,0,strlen($list_page_value))){
+                $this->context->smarty->assign(
+                array(
+                    'LINK' => $link_current,
+                    'PAGE' =>$list_page_value,
+                    'NAV_SHOW'=>true
+                )
+             );
+            }
+        }
+        if(substr( Configuration::get('PS_GEER_IO_PAGES'),0, 3 )=='end'){
+            $list_page_value = Configuration::get('PS_GEER_IO_PAGES');
+            $list_page_value = substr($list_page_value,4);
+            $list_page_value = strrev($list_page_value);
+            $link_current = substr($_SERVER['REQUEST_URI'],strlen(__PS_BASE_URI__));
+            $link_current =strrev($link_current);
+            if($list_page_value == substr($link_current,0,strlen($list_page_value))){
+                $this->context->smarty->assign(
+                array(
+                    'NAV_SHOW'=>true
+                )
+             );
+            }
         }
         if (isset($this->context->cookie->STATE_CONTACT)) { 
             $id = $this->context->cookie->id_customer;
@@ -180,12 +207,25 @@ class Geerio extends Module {
             }
             if ($hmac_secret = Tools::getValue('hmac_secret'))
                 Configuration::updateValue('PS_GEER_IO_HMAC_SECRET', $hmac_secret);
-            if ($list_page = Tools::getValue('list_page'))
+            if ($list_page = Tools::getValue('list-page'))
                 Configuration::updateValue('PS_GEER_IO_PAGES', $list_page);
+            if ($link_start = Tools::getValue('value-link-start'))
+                Configuration::updateValue('PS_GEER_LINK_START', $link_start);
+            if ($link_end = Tools::getValue('value-link-end'))
+                Configuration::updateValue('PS_GEER_LINK_END', $link_end);
             if ($orders_status = Tools::getValue('orders_status'))
                 Configuration::updateValue('PS_GEER_IO_ORDERS_STATUS', implode(';', $orders_status));
         }
         return $output . $this->displayForm();
+    }
+    public function getValueRadio($str){
+        if(substr( Configuration::get('PS_GEER_IO_PAGES'),0, 5 )=='start' && $str=='start'){
+            return Configuration::get('PS_GEER_IO_PAGES');
+        }
+        if(substr( Configuration::get('PS_GEER_IO_PAGES'),0, 3 )=='end' && $str=='end'){
+            return Configuration::get('PS_GEER_IO_PAGES');
+        }
+        return '';
     }
 
     public function displayForm() {
@@ -231,8 +271,9 @@ class Geerio extends Module {
                 array(
                     'type' => 'radio',
                     'label' => $this->l('Enable this option'),
-                    'name' => 'list_page',
+                    'name' => 'list-page',
                     'required' => true,
+                    'class' => 'list-page-radio',
                     'is_bool' => true,
                     'values' => array(
                         array(
@@ -251,43 +292,40 @@ class Geerio extends Module {
                             'label' => $this->l('Product Page')
                         ),
                         array(
-                            'id' => 'link_start_with',
-                            'value' => '',
+                            'id' => 'link-start',
+                            'class' => 'radio-link',
+                            'value' => 'start_'.Configuration::get('PS_GEER_LINK_START'),
                             'label' => $this->l('Link Start with')
                         ),
                         array(
-                            'id' => 'link_terminal_with',
-                            'value' => '',
+                            'id' => 'link-end',
+                            'class' => 'radio-link',
+                            'value' => 'end_'.Configuration::get('PS_GEER_LINK_END'),
                             'label' => $this->l('Link End with')
                         )
                     )
                 ),
                 array(
                     'type' => 'text',
-                    'name' => 'value_for_link_start',
-                    'id' => 'value_for_start_with',
+                    'id' => 'value-for-link-start',
+                    'name' =>'value-link-start',
+                    'class' => 'value-for-link'
+                   
                 ),
                 array(
                     'type' => 'text',
-                    'name' => 'value_for_link_end',
-                    'id' => 'value_for_end_with',
+                    'id' => 'value-for-link-end',
+                    'name' =>'value-link-end',
+                    'class' => 'value-for-link'
+                  
                 ),
-//                array(
-//                    'type'=>'free',
-//                    'label' =>  $this->l('Connector URL'),
-//                    'name' => 'connector'
-//                ),
                 
-                array(
-                    'type'=>'free',
-                    'label' =>  $this->l('Version'),
-                    'name' => 'version'
-                ),
             ),
             'submit' => array(
                 'title' => $this->l('Save'),
             )
         );
+        
 
         $helper = new HelperForm();
 
@@ -324,10 +362,12 @@ class Geerio extends Module {
         $helper->fields_value['hmac_secret'] = Configuration::get('PS_GEER_IO_HMAC_SECRET');
         $helper->fields_value['orders_status[]'] = explode(';',Configuration::get('PS_GEER_IO_ORDERS_STATUS'));
         $helper->fields_value['connector'] = _PS_BASE_URL_.__PS_BASE_URI__.'module/'.$this->name.'/trigger';
-        $helper->fields_value['version'] = $this->version;
-        $helper->fields_value['list_page'] = Configuration::get('PS_GEER_IO_PAGES');
+        $helper->fields_value['list-page'] = Configuration::get('PS_GEER_IO_PAGES');
+        $helper->fields_value['value-link-start'] = Configuration::get('PS_GEER_LINK_START');
+        $helper->fields_value['value-link-end'] = Configuration::get('PS_GEER_LINK_END');
 
         return $helper->generateForm($fields_form);
     }
+    
         
 }

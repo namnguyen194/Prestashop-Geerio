@@ -1,4 +1,4 @@
-{if $CONTACT_SCRIPT }
+{if isset($CONTACT_SCRIPT) && $CONTACT_SCRIPT }
 <script>       
 var data ={
 contact_id:'{$INFO['id']}', //user's unique id, integer, mandatory
@@ -44,12 +44,11 @@ function SendActionGeerio(data){
 
 <br />
 {/if}
-{if $NAV_ALL OR $NAV_PRO}
+{if isset($NAV_SHOW) AND $NAV_SHOW}
     <script>
         var dataURL={
         url_nav:document.URL
         };
-        geerio.sendData(dataURL, 'nav');
         SendActionGeerio(dataURL);
         function SendActionGeerio(data){
             if(typeof geerio === "undefined"){
@@ -58,10 +57,12 @@ function SendActionGeerio(data){
                 }, 3000);
             }
             else{
-                geerio.sendData(data, 'contact');
+                geerio.sendData(data, 'nav');
                 console.log('Send OK');
             }
         }
     </script>
+    <h1>LINK :{$LINK}</h1>
+    <h1>PAGE :{$PAGE}</h1>
 {/if }
 
