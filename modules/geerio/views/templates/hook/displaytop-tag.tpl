@@ -62,7 +62,35 @@ function SendActionGeerio(data){
             }
         }
     </script>
-    <h1>LINK :{$LINK}</h1>
-    <h1>PAGE :{$PAGE}</h1>
+
 {/if }
+
+{if  isset($ORDER_SEND_GEERIO) AND $ORDER_SEND_GEERIO}
+    <script>       
+        var data ={
+        id_contact:{$ORDER_CONTACT}, //user’s unique ID, integer, mandatory
+        cart_id:{$ORDER_CART}, //cart unique ID, integer, mandatory
+        order_id:{$ORDER_ID}, // order unique ID, integer, mandatory
+        order_status:{$ORDER_STATUS}, //order status, integer, only 1 (validated) or 0 (not validated), mandatory
+        status_label:'{$ORDER_NAME}', //order status label, mandatory
+        order_date_creation:{$ORDER_CREATE}, //order date creation, timestamp since the epoch, mandatory
+        order_date_update:{$ORDER_UPDATE}, //order date update,  timestamp since the epoch, mandatory
+        order_value:{$ORDER_VALUE} //total order value, decimal, mandatory
+        };
+        SendActionGeerio(data);
+        function SendActionGeerio(data){
+            if(typeof geerio === "undefined"){
+                setTimeout(function() {
+                    SendActionGeerio(data);
+                }, 3000);
+            }
+            else{
+                geerio.sendData(data, 'order');
+                console.log('Send OK');
+            }
+        }
+</script>
+{/if}
+
+
 

@@ -67,7 +67,10 @@ class Geerio extends Module {
         $this->registerHook('displayTop') ;
         $this->registerHook('displayRightColumnProduct');
         $this->registerHook('actionCartSave') ;
-        $this->registerHook('ActionAdminControllerSetMedia');      
+        $this->registerHook('ActionAdminControllerSetMedia'); //
+        $this->registerHook('actionOrderStatusUpdate'); //
+        $this->registerHook('displayBackOfficeTop'); //
+        $this->registerHook('displayBackOfficeFooter');
         return true;
     }
 
@@ -87,8 +90,52 @@ class Geerio extends Module {
         $this->unregisterHook('displayRightColumnProduct');
         $this->unregisterHook('actionCartSave');
         $this->unregisterHook('ActionAdminControllerSetMedia');
+        $this->unregisterHook('actionOrderStatusUpdate');
+        $this->unregisterHook('displayBackOfficeTop'); 
+        $this->unregisterHook('displayBackOfficeFooter');
 
         return true;
+    }
+    
+    function hookdisplayBackOfficeFooter(){
+        if (isset($this->context->cookie->STATE_ORDER)) {
+            $order = new OrderCore($this->context->cookie->STATE_ORDER);
+            $order_state = $order->current_state;
+            $list_state = explode(';', Configuration::get('PS_GEER_IO_ORDERS_STATUS'));
+            //var_dump($list_state);
+            if (in_array($order_state, $list_state)) {
+                $this->context->smarty->assign(
+                        array(
+                            'ORDER_STATUS' => 1
+                ));
+            } else {
+                $this->context->smarty->assign(
+                        array(
+                            'ORDER_STATUS' => 0
+                ));
+            }
+            $this->context->smarty->assign(
+                    array(
+                        'ORDER_SEND_GEERIO' => true,
+                        'ORDER_NAME' => $this->context->cookie->STATE_ORDER_NAME,
+                        'ORDER_CONTACT' => $order->id_customer,
+                        'ORDER_CART' => $order->id_cart,
+                        'ORDER_ID' => $order->id,
+                        'ORDER_CREATE' => strtotime($order->date_add),
+                        'ORDER_UPDATE' => strtotime($order->date_upd),
+                        'ORDER_VALUE' => $order->total_paid
+            ));
+            $this->context->cookie->__unset('STATE_ORDER');
+             $this->context->cookie->__unset('STATE_ORDER_NAME');
+            return $this->display(__FILE__, 'displaytop-tag.tpl');
+        }
+        return '';
+    }
+    function hookactionOrderStatusUpdate($params){
+        
+        $this->context->cookie->__set('STATE_ORDER',$params['id_order']);  
+        $this->context->cookie->__set('STATE_ORDER_NAME',$params['newOrderStatus']->name);
+        
     }
     
     function hookActionAdminControllerSetMedia(){

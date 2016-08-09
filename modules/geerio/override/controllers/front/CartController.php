@@ -7,6 +7,7 @@
  */
 
 class CartController extends CartControllerCore {
+    
     public function displayAjax()
     {
         if ($this->errors) {
